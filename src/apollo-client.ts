@@ -1,5 +1,5 @@
-import axios, { AxiosInstance } from 'axios';
-import dotenv from 'dotenv';
+import axios, { AxiosInstance } from "axios";
+import dotenv from "dotenv";
 
 // Load environment variables
 dotenv.config();
@@ -7,23 +7,23 @@ dotenv.config();
 // Helper function to strip URL
 const stripUrl = (url?: string): string | undefined => {
   if (!url) return undefined;
-  
+
   try {
     // Remove protocol (http://, https://)
-    let stripped = url.replace(/^https?:\/\//, '');
-    
+    let stripped = url.replace(/^https?:\/\//, "");
+
     // Remove www.
-    stripped = stripped.replace(/^www\./, '');
-    
+    stripped = stripped.replace(/^www\./, "");
+
     // Remove trailing slash
-    stripped = stripped.replace(/\/$/, '');
-    
+    stripped = stripped.replace(/\/$/, "");
+
     // Convert to lowercase
     stripped = stripped.toLowerCase();
-    
+
     return stripped;
   } catch (error) {
-    console.error('Error stripping URL:', error);
+    console.error("Error stripping URL:", error);
     return url;
   }
 };
@@ -71,22 +71,22 @@ export class ApolloClient {
   private axiosInstance: AxiosInstance;
 
   constructor(apiKey?: string) {
-    this.apiKey = apiKey || process.env.APOLLO_IO_API_KEY || '';
-    
+    this.apiKey = apiKey || process.env.APOLLO_IO_API_KEY || "";
+
     if (!this.apiKey) {
-      throw new Error('APOLLO_IO_API_KEY environment variable is required');
+      throw new Error("APOLLO_IO_API_KEY environment variable is required");
     }
-    
-    this.baseUrl = 'https://api.apollo.io/api/v1';
+
+    this.baseUrl = "https://api.apollo.io/api/v1";
     this.headers = {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache',
-      'x-api-key': this.apiKey
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+      "x-api-key": this.apiKey,
     };
 
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,
-      headers: this.headers
+      headers: this.headers,
     });
   }
 
@@ -97,10 +97,10 @@ export class ApolloClient {
   async peopleEnrichment(query: PeopleEnrichmentQuery): Promise<any> {
     try {
       const url = `${this.baseUrl}/people/match`;
-      console.log('url', url);
-      console.log('query', query);
+      console.log("url", url);
+      console.log("query", query);
       const response = await this.axiosInstance.post(url, query);
-      
+
       if (response.status === 200) {
         return response.data;
       } else {
@@ -108,7 +108,11 @@ export class ApolloClient {
         return null;
       }
     } catch (error: any) {
-      console.error(`Error: ${error.response?.status} - ${error.response?.statusText || error.message}`);
+      console.error(
+        `Error: ${error.response?.status} - ${
+          error.response?.statusText || error.message
+        }`
+      );
       return null;
     }
   }
@@ -117,11 +121,13 @@ export class ApolloClient {
    * Use the Organization Enrichment endpoint to enrich data for 1 company.
    * https://docs.apollo.io/reference/organization-enrichment
    */
-  async organizationEnrichment(query: OrganizationEnrichmentQuery): Promise<any> {
+  async organizationEnrichment(
+    query: OrganizationEnrichmentQuery
+  ): Promise<any> {
     try {
       const url = `${this.baseUrl}/organizations/enrich`;
       const response = await this.axiosInstance.get(url, { params: query });
-      
+
       if (response.status === 200) {
         return response.data;
       } else {
@@ -129,7 +135,11 @@ export class ApolloClient {
         return null;
       }
     } catch (error: any) {
-      console.error(`Error: ${error.response?.status} - ${error.response?.statusText || error.message}`);
+      console.error(
+        `Error: ${error.response?.status} - ${
+          error.response?.statusText || error.message
+        }`
+      );
       return null;
     }
   }
@@ -142,7 +152,7 @@ export class ApolloClient {
     try {
       const url = `${this.baseUrl}/mixed_people/search`;
       const response = await this.axiosInstance.post(url, query);
-      
+
       if (response.status === 200) {
         return response.data;
       } else {
@@ -150,7 +160,11 @@ export class ApolloClient {
         return null;
       }
     } catch (error: any) {
-      console.error(`Error: ${error.response?.status} - ${error.response?.statusText || error.message}`);
+      console.error(
+        `Error: ${error.response?.status} - ${
+          error.response?.statusText || error.message
+        }`
+      );
       return null;
     }
   }
@@ -163,7 +177,7 @@ export class ApolloClient {
     try {
       const url = `${this.baseUrl}/mixed_companies/search`;
       const response = await this.axiosInstance.post(url, query);
-      
+
       if (response.status === 200) {
         return response.data;
       } else {
@@ -171,7 +185,11 @@ export class ApolloClient {
         return null;
       }
     } catch (error: any) {
-      console.error(`Error: ${error.response?.status} - ${error.response?.statusText || error.message}`);
+      console.error(
+        `Error: ${error.response?.status} - ${
+          error.response?.statusText || error.message
+        }`
+      );
       return null;
     }
   }
@@ -184,7 +202,7 @@ export class ApolloClient {
     try {
       const url = `${this.baseUrl}/organizations/${organizationId}/job_postings`;
       const response = await this.axiosInstance.get(url);
-      
+
       if (response.status === 200) {
         return response.data;
       } else {
@@ -192,7 +210,11 @@ export class ApolloClient {
         return null;
       }
     } catch (error: any) {
-      console.error(`Error: ${error.response?.status} - ${error.response?.statusText || error.message}`);
+      console.error(
+        `Error: ${error.response?.status} - ${
+          error.response?.statusText || error.message
+        }`
+      );
       return null;
     }
   }
@@ -203,30 +225,32 @@ export class ApolloClient {
   async getPersonEmail(apolloId: string): Promise<any> {
     try {
       if (!apolloId) {
-        throw new Error('Apollo ID is required');
+        throw new Error("Apollo ID is required");
       }
 
       const baseUrl = `https://app.apollo.io/api/v1/mixed_people/add_to_my_prospects`;
       const payload = {
         entity_ids: [apolloId],
-        analytics_context: 'Searcher: Individual Add Button',
+        analytics_context: "Searcher: Individual Add Button",
         skip_fetching_people: true,
-        cta_name: 'Access email',
-        cacheKey: Date.now()
+        cta_name: "Access email",
+        cacheKey: Date.now(),
       };
 
-      const response = await axios.post(baseUrl, payload, { 
-        headers: { 
-          'X-Api-Key': this.apiKey,
-          'Content-Type': 'application/json'
-        } 
+      const response = await axios.post(baseUrl, payload, {
+        headers: {
+          "X-Api-Key": this.apiKey,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.data) {
-        throw new Error('No data received from Apollo API');
+        throw new Error("No data received from Apollo API");
       }
 
-      const emails = (response?.data?.contacts ?? []).map((item: any) => item.email);
+      const emails = (response?.data?.contacts ?? []).map(
+        (item: any) => item.email
+      );
       return emails;
     } catch (error: any) {
       console.error(`Error getting person email: ${error.message}`);
@@ -240,93 +264,108 @@ export class ApolloClient {
   async employeesOfCompany(query: EmployeesOfCompanyQuery): Promise<any> {
     try {
       const { company, website_url, linkedin_url } = query;
-      
+
       if (!company) {
-        throw new Error('Company name is required');
+        throw new Error("Company name is required");
       }
 
       const strippedWebsiteUrl = stripUrl(website_url);
       const strippedLinkedinUrl = stripUrl(linkedin_url);
-      
+
       // First search for the company
       const companySearchPayload = {
         q_organization_name: company,
         page: 1,
-        limit: 100
+        limit: 100,
       };
-      
+
       const mixedCompaniesResponse = await axios.post(
-        'https://api.apollo.io/v1/mixed_companies/search', 
-        companySearchPayload, 
+        "https://api.apollo.io/v1/mixed_companies/search",
+        companySearchPayload,
         {
           headers: {
-            'Content-Type': 'application/json',
-            'X-Api-Key': this.apiKey
-          }
+            "Content-Type": "application/json",
+            "X-Api-Key": this.apiKey,
+          },
         }
       );
-      
+
       if (!mixedCompaniesResponse.data) {
-        throw new Error('No data received from Apollo API');
+        throw new Error("No data received from Apollo API");
       }
-      
+
       let organizations = mixedCompaniesResponse.data.organizations;
       if (organizations.length === 0) {
-        throw new Error('No organizations found');
+        throw new Error("No organizations found");
       }
-      
+
       // Filter companies by website or LinkedIn URL if provided
       const companyObjs = organizations.filter((item: any) => {
         const companyLinkedin = stripUrl(item.linkedin_url);
         const companyWebsite = stripUrl(item.website_url);
-        
-        if (strippedLinkedinUrl && companyLinkedin && companyLinkedin === strippedLinkedinUrl) {
+
+        if (
+          strippedLinkedinUrl &&
+          companyLinkedin &&
+          companyLinkedin === strippedLinkedinUrl
+        ) {
           return true;
-        } else if (strippedWebsiteUrl && companyWebsite && companyWebsite === strippedWebsiteUrl) {
+        } else if (
+          strippedWebsiteUrl &&
+          companyWebsite &&
+          companyWebsite === strippedWebsiteUrl
+        ) {
           return true;
         }
         return false;
       });
-      
+
       // If we have filtered results, use the first one, otherwise use the first from the original search
-      const companyObj = companyObjs.length > 0 ? companyObjs[0] : organizations[0];
+      const companyObj =
+        companyObjs.length > 0 ? companyObjs[0] : organizations[0];
       const companyId = companyObj.id;
-      
+
       if (!companyId) {
-        throw new Error('Could not determine company ID');
+        throw new Error("Could not determine company ID");
       }
-      
+
       // Now search for employees
       const peopleSearchPayload: any = {
         organization_ids: [companyId],
         page: 1,
-        limit: 100
+        limit: 100,
       };
-      
+
       // Add optional filters if provided in the tool config
       if (query.person_seniorities) {
-        peopleSearchPayload.person_titles = (query.person_seniorities ?? '').split(',').map((item: string) => item.trim());
+        peopleSearchPayload.person_titles = (query.person_seniorities ?? "")
+          .split(",")
+          .map((item: string) => item.trim());
       }
-      
+
       if (query.contact_email_status) {
-        peopleSearchPayload.contact_email_status_v2 = (query.contact_email_status ?? '').split(',').map((item: string) => item.trim());
+        peopleSearchPayload.contact_email_status_v2 = (
+          query.contact_email_status ?? ""
+        )
+          .split(",")
+          .map((item: string) => item.trim());
       }
-      
+
       const peopleResponse = await axios.post(
-        'https://api.apollo.io/v1/mixed_people/search', 
-        peopleSearchPayload, 
+        "https://api.apollo.io/v1/mixed_people/search",
+        peopleSearchPayload,
         {
           headers: {
-            'Content-Type': 'application/json',
-            'X-Api-Key': this.apiKey
-          }
+            "Content-Type": "application/json",
+            "X-Api-Key": this.apiKey,
+          },
         }
       );
-      
+
       if (!peopleResponse.data) {
-        throw new Error('No data received from Apollo API');
+        throw new Error("No data received from Apollo API");
       }
-      
+
       return peopleResponse.data.people || [];
     } catch (error: any) {
       console.error(`Error finding employees: ${error.message}`);
@@ -341,7 +380,7 @@ async function main() {
     // Get API key from environment variable
     const apiKey = process.env.APOLLO_IO_API_KEY;
     if (!apiKey) {
-      throw new Error('APOLLO_IO_API_KEY environment variable is required');
+      throw new Error("APOLLO_IO_API_KEY environment variable is required");
     }
 
     const client = new ApolloClient(apiKey);
@@ -349,22 +388,32 @@ async function main() {
     // Example People Enrichment
     const peopleEnrichmentQuery: PeopleEnrichmentQuery = {
       first_name: "Tim",
-      last_name: "Zheng"
+      last_name: "Zheng",
     };
-    const peopleEnrichmentResponse = await client.peopleEnrichment(peopleEnrichmentQuery);
+    const peopleEnrichmentResponse = await client.peopleEnrichment(
+      peopleEnrichmentQuery
+    );
     if (peopleEnrichmentResponse) {
-      console.log("People Enrichment Response:", JSON.stringify(peopleEnrichmentResponse, null, 2));
+      console.log(
+        "People Enrichment Response:",
+        JSON.stringify(peopleEnrichmentResponse, null, 2)
+      );
     } else {
       console.log("People Enrichment failed.");
     }
 
     // Example Organization Enrichment
     const organizationEnrichmentQuery: OrganizationEnrichmentQuery = {
-      domain: "apollo.io"
+      domain: "apollo.io",
     };
-    const organizationEnrichmentResponse = await client.organizationEnrichment(organizationEnrichmentQuery);
+    const organizationEnrichmentResponse = await client.organizationEnrichment(
+      organizationEnrichmentQuery
+    );
     if (organizationEnrichmentResponse) {
-      console.log("Organization Enrichment Response:", JSON.stringify(organizationEnrichmentResponse, null, 2));
+      console.log(
+        "Organization Enrichment Response:",
+        JSON.stringify(organizationEnrichmentResponse, null, 2)
+      );
     } else {
       console.log("Organization Enrichment failed.");
     }
@@ -373,22 +422,30 @@ async function main() {
     const peopleSearchQuery: PeopleSearchQuery = {
       person_titles: ["Marketing Manager"],
       person_seniorities: ["vp"],
-      q_organization_domains_list: ["apollo.io"]
+      q_organization_domains_list: ["apollo.io"],
     };
     const peopleSearchResponse = await client.peopleSearch(peopleSearchQuery);
     if (peopleSearchResponse) {
-      console.log("People Search Response:", JSON.stringify(peopleSearchResponse, null, 2));
+      console.log(
+        "People Search Response:",
+        JSON.stringify(peopleSearchResponse, null, 2)
+      );
     } else {
       console.log("People Search failed.");
     }
 
     // Example Organization Search
     const organizationSearchQuery: OrganizationSearchQuery = {
-      organization_locations: ["Japan", "Ireland"]
+      organization_locations: ["Japan", "Ireland"],
     };
-    const organizationSearchResponse = await client.organizationSearch(organizationSearchQuery);
+    const organizationSearchResponse = await client.organizationSearch(
+      organizationSearchQuery
+    );
     if (organizationSearchResponse) {
-      console.log("Organization Search Response:", JSON.stringify(organizationSearchResponse, null, 2));
+      console.log(
+        "Organization Search Response:",
+        JSON.stringify(organizationSearchResponse, null, 2)
+      );
     } else {
       console.log("Organization Search failed.");
     }
@@ -396,9 +453,13 @@ async function main() {
     // Example Organization Job Postings
     // Note: You need a valid organization ID for this to work
     const organizationId = "5e60b6381c85b4008c83"; // Replace with a valid organization ID
-    const organizationJobPostingsResponse = await client.organizationJobPostings(organizationId);
+    const organizationJobPostingsResponse =
+      await client.organizationJobPostings(organizationId);
     if (organizationJobPostingsResponse) {
-      console.log("Organization Job Postings Response:", JSON.stringify(organizationJobPostingsResponse, null, 2));
+      console.log(
+        "Organization Job Postings Response:",
+        JSON.stringify(organizationJobPostingsResponse, null, 2)
+      );
     } else {
       console.log("Organization Job Postings failed.");
     }

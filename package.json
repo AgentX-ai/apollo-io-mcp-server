@@ -1,42 +1,52 @@
 {
-  "name": "apollo-io-mcp-server",
-  "version": "0.1.0",
-  "description": "A powerful Model Context Protocol (MCP) server implementation for seamless Apollo.io API integration, enabling AI assistants to interact with Apollo.io data",
-  "main": "dist/index.js",
-  "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "tsx --watch src/index.ts",
-    "stdio": "node dist/index.js"
-  },
+  "name": "@agentx-ai/apollo-io-mcp-server",
   "keywords": [
-    "mcp",
     "apollo-io",
-    "model-context-protocol",
-    "ai-assistant",
-    "apollo-io-api",
-    "apollo-io-integration",
-    "typescript",
+    "api",
+    "mcp",
+    "server",
+    "agentx",
+    "ai",
     "people-enrichment",
     "organization-enrichment",
     "people-search",
     "organization-search",
-    "job-postings",
-    "ai-tools"
+    "job-postings"
   ],
-  "author": "lakhvinder singh",
+  "version": "1.0.0",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -build && node scripts/build-cli.js",
+    "dev": "tsx watch scripts/start-server.ts"
+  },
+  "bin": {
+    "apollo-io-mcp-server": "bin/cli.mjs"
+  },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.8.0",
-    "axios": "^1.6.7",
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "axios": "^1.8.4",
     "dotenv": "^16.4.7",
-    "mcp-proxy-auth": "^1.0.1",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@types/node": "^20.10.5",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "@types/node": "^20.17.16",
+    "esbuild": "^0.25.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "description": "AgentX MCP server for Apollo.io API with comprehensive people and organization enrichment capabilities",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/AgentX-ai/AgentX-mcp-servers.git"
+  },
+  "author": "AgentX AI",
+  "bugs": {
+    "url": "https://github.com/AgentX-ai/AgentX-mcp-servers/issues"
+  },
+  "homepage": "https://github.com/AgentX-ai/AgentX-mcp-servers/tree/main/apollo-io-mcp-server#readme",
+  "publishConfig": {
+    "access": "public"
   }
 }
