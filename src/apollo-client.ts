@@ -38,22 +38,76 @@ export interface PeopleEnrichmentQuery {
   [key: string]: any;
 }
 
-export interface OrganizationEnrichmentQuery {
-  domain?: string;
-  name?: string;
-  [key: string]: any;
-}
-
 export interface PeopleSearchQuery {
-  q_organization_domains_list?: string[];
   person_titles?: string[];
+  include_similar_titles?: boolean;
+  q_keywords?: string;
+  person_locations?: string[];
   person_seniorities?: string[];
+  organization_locations?: string[];
+  q_organization_domains_list?: string[];
+  contact_email_status?: string[];
+  organization_ids?: string[];
+  organization_num_employees_ranges?: string[];
+  revenue_range?: {
+    min?: number;
+    max?: number;
+  };
+  currently_using_all_of_technology_uids?: string[];
+  currently_using_any_of_technology_uids?: string[];
+  currently_not_using_any_of_technology_uids?: string[];
+  q_organization_job_titles?: string[];
+  organization_job_locations?: string[];
+  organization_num_jobs_range?: {
+    min?: number;
+    max?: number;
+  };
+  organization_job_posted_at_range?: {
+    min?: string;
+    max?: string;
+  };
+  page?: number;
+  per_page?: number;
   [key: string]: any;
 }
 
 export interface OrganizationSearchQuery {
   q_organization_domains_list?: string[];
   organization_locations?: string[];
+  organization_not_locations?: string[];
+  organization_num_employees_ranges?: string[];
+  revenue_range?: {
+    min?: number;
+    max?: number;
+  };
+  currently_using_any_of_technology_uids?: string[];
+  q_organization_keyword_tags?: string[];
+  q_organization_name?: string;
+  organization_ids?: string[];
+  latest_funding_amount_range?: {
+    min?: number;
+    max?: number;
+  };
+  total_funding_range?: {
+    min?: number;
+    max?: number;
+  };
+  latest_funding_date_range?: {
+    min?: string;
+    max?: string;
+  };
+  q_organization_job_titles?: string[];
+  organization_job_locations?: string[];
+  organization_num_jobs_range?: {
+    min?: number;
+    max?: number;
+  };
+  organization_job_posted_at_range?: {
+    min?: string;
+    max?: string;
+  };
+  page?: number;
+  per_page?: number;
   [key: string]: any;
 }
 
@@ -97,23 +151,27 @@ export class ApolloClient {
   async peopleEnrichment(query: PeopleEnrichmentQuery): Promise<any> {
     try {
       const url = `${this.baseUrl}/people/match`;
-      console.log("url", url);
-      console.log("query", query);
       const response = await this.axiosInstance.post(url, query);
 
       if (response.status === 200) {
         return response.data;
       } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-        return null;
+        throw new Error(
+          `People enrichment failed: ${response.status} - ${response.statusText}`
+        );
       }
     } catch (error: any) {
-      console.error(
-        `Error: ${error.response?.status} - ${
-          error.response?.statusText || error.message
-        }`
-      );
-      return null;
+      if (error.response) {
+        throw new Error(
+          `People enrichment API error: ${error.response.status} - ${
+            error.response.statusText
+          }. Response: ${JSON.stringify(error.response.data)}`
+        );
+      } else if (error.request) {
+        throw new Error(`People enrichment network error: ${error.message}`);
+      } else {
+        throw new Error(`People enrichment error: ${error.message}`);
+      }
     }
   }
 
@@ -121,26 +179,36 @@ export class ApolloClient {
    * Use the Organization Enrichment endpoint to enrich data for 1 company.
    * https://docs.apollo.io/reference/organization-enrichment
    */
-  async organizationEnrichment(
-    query: OrganizationEnrichmentQuery
-  ): Promise<any> {
+  async organizationEnrichment(domain: string): Promise<any> {
     try {
-      const url = `${this.baseUrl}/organizations/enrich`;
-      const response = await this.axiosInstance.get(url, { params: query });
+      const url = `${this.baseUrl}/organizations/enrich?domain=${domain}`;
+      const response = await this.axiosInstance.get(url);
 
       if (response.status === 200) {
         return response.data;
       } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-        return null;
+        throw new Error(
+          `Organization enrichment failed for domain '${domain}': ${response.status} - ${response.statusText}`
+        );
       }
     } catch (error: any) {
-      console.error(
-        `Error: ${error.response?.status} - ${
-          error.response?.statusText || error.message
-        }`
-      );
-      return null;
+      if (error.response) {
+        throw new Error(
+          `Organization enrichment API error for domain '${domain}': ${
+            error.response.status
+          } - ${error.response.statusText}. Response: ${JSON.stringify(
+            error.response.data
+          )}`
+        );
+      } else if (error.request) {
+        throw new Error(
+          `Organization enrichment network error for domain '${domain}': ${error.message}`
+        );
+      } else {
+        throw new Error(
+          `Organization enrichment error for domain '${domain}': ${error.message}`
+        );
+      }
     }
   }
 
@@ -156,16 +224,22 @@ export class ApolloClient {
       if (response.status === 200) {
         return response.data;
       } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-        return null;
+        throw new Error(
+          `People search failed: ${response.status} - ${response.statusText}`
+        );
       }
     } catch (error: any) {
-      console.error(
-        `Error: ${error.response?.status} - ${
-          error.response?.statusText || error.message
-        }`
-      );
-      return null;
+      if (error.response) {
+        throw new Error(
+          `People search API error: ${error.response.status} - ${
+            error.response.statusText
+          }. Response: ${JSON.stringify(error.response.data)}`
+        );
+      } else if (error.request) {
+        throw new Error(`People search network error: ${error.message}`);
+      } else {
+        throw new Error(`People search error: ${error.message}`);
+      }
     }
   }
 
@@ -181,16 +255,22 @@ export class ApolloClient {
       if (response.status === 200) {
         return response.data;
       } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-        return null;
+        throw new Error(
+          `Organization search failed: ${response.status} - ${response.statusText}`
+        );
       }
     } catch (error: any) {
-      console.error(
-        `Error: ${error.response?.status} - ${
-          error.response?.statusText || error.message
-        }`
-      );
-      return null;
+      if (error.response) {
+        throw new Error(
+          `Organization search API error: ${error.response.status} - ${
+            error.response.statusText
+          }. Response: ${JSON.stringify(error.response.data)}`
+        );
+      } else if (error.request) {
+        throw new Error(`Organization search network error: ${error.message}`);
+      } else {
+        throw new Error(`Organization search error: ${error.message}`);
+      }
     }
   }
 
@@ -206,16 +286,28 @@ export class ApolloClient {
       if (response.status === 200) {
         return response.data;
       } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-        return null;
+        throw new Error(
+          `Organization job postings failed for ID '${organizationId}': ${response.status} - ${response.statusText}`
+        );
       }
     } catch (error: any) {
-      console.error(
-        `Error: ${error.response?.status} - ${
-          error.response?.statusText || error.message
-        }`
-      );
-      return null;
+      if (error.response) {
+        throw new Error(
+          `Organization job postings API error for ID '${organizationId}': ${
+            error.response.status
+          } - ${error.response.statusText}. Response: ${JSON.stringify(
+            error.response.data
+          )}`
+        );
+      } else if (error.request) {
+        throw new Error(
+          `Organization job postings network error for ID '${organizationId}': ${error.message}`
+        );
+      } else {
+        throw new Error(
+          `Organization job postings error for ID '${organizationId}': ${error.message}`
+        );
+      }
     }
   }
 
@@ -253,8 +345,23 @@ export class ApolloClient {
       );
       return emails;
     } catch (error: any) {
-      console.error(`Error getting person email: ${error.message}`);
-      return null;
+      if (error.response) {
+        throw new Error(
+          `Get person email API error for ID '${apolloId}': ${
+            error.response.status
+          } - ${error.response.statusText}. Response: ${JSON.stringify(
+            error.response.data
+          )}`
+        );
+      } else if (error.request) {
+        throw new Error(
+          `Get person email network error for ID '${apolloId}': ${error.message}`
+        );
+      } else {
+        throw new Error(
+          `Get person email error for ID '${apolloId}': ${error.message}`
+        );
+      }
     }
   }
 
@@ -296,7 +403,7 @@ export class ApolloClient {
 
       let organizations = mixedCompaniesResponse.data.organizations;
       if (organizations.length === 0) {
-        throw new Error("No organizations found");
+        throw new Error(`No organizations found for company '${company}'`);
       }
 
       // Filter companies by website or LinkedIn URL if provided
@@ -326,7 +433,7 @@ export class ApolloClient {
       const companyId = companyObj.id;
 
       if (!companyId) {
-        throw new Error("Could not determine company ID");
+        throw new Error(`Could not determine company ID for '${company}'`);
       }
 
       // Now search for employees
@@ -368,8 +475,23 @@ export class ApolloClient {
 
       return peopleResponse.data.people || [];
     } catch (error: any) {
-      console.error(`Error finding employees: ${error.message}`);
-      return null;
+      if (error.response) {
+        throw new Error(
+          `Employees of company API error for '${query.company}': ${
+            error.response.status
+          } - ${error.response.statusText}. Response: ${JSON.stringify(
+            error.response.data
+          )}`
+        );
+      } else if (error.request) {
+        throw new Error(
+          `Employees of company network error for '${query.company}': ${error.message}`
+        );
+      } else {
+        throw new Error(
+          `Employees of company error for '${query.company}': ${error.message}`
+        );
+      }
     }
   }
 }
@@ -403,11 +525,11 @@ async function main() {
     }
 
     // Example Organization Enrichment
-    const organizationEnrichmentQuery: OrganizationEnrichmentQuery = {
-      domain: "apollo.io",
+    const organizationEnrichmentQuery = {
+      domain: "agentx.so",
     };
     const organizationEnrichmentResponse = await client.organizationEnrichment(
-      organizationEnrichmentQuery
+      organizationEnrichmentQuery.domain
     );
     if (organizationEnrichmentResponse) {
       console.log(
