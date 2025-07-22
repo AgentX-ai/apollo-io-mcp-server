@@ -1,5 +1,9 @@
 ## [![npm version](https://img.shields.io/npm/v/@agentx-ai/apollo-io-mcp-server)](https://www.npmjs.com/package/@agentx-ai/apollo-io-mcp-server)
 
+[![Website](https://img.shields.io/badge/Website-🌐-purple)](https://www.agentx.so/mcp/apollo-io)
+
+[![Watch the Apollo IO Tutorial video](https://img.shields.io/badge/Watch_on-YouTube-red?logo=youtube&style=for-the-badge)](https://youtu.be/W1vgVR0XHKk)
+
 # Apollo.io MCP Server
 
 A powerful Model Context Protocol (MCP) server implementation for seamless Apollo.io API integration, enabling AI assistants to interact with Apollo.io data for people and organization enrichment.
